@@ -6,7 +6,6 @@ import {
   Compass, 
   Check, 
   ArrowRight, 
-  Mail, 
   ChevronDown, 
   ChevronUp,
   Menu,
@@ -22,23 +21,29 @@ import {
   Coffee,
   Headphones,
   User
-  // 已删除未使用的 Copy 组件，防止报错
 } from 'lucide-react';
 
-// --- 配置区域 (你需要替换这里) ---
+// --- 配置区域 (已填入你的真实信息) ---
 const CONFIG = {
   // 个人博客/Notion 链接
   notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862", 
-  // 预约板块的 ID (用于页面跳转)
-  bookingSection: "booking-section", 
-  // Gumroad 商品链接 (示例)
+  
+  // 你的真实 Calendly 链接
+  bookingLink: "https://calendly.com/s-1808218271/30min",
+  
+  // 预约板块的 ID (用于页面内部滚动跳转)
+  bookingSectionId: "booking-section", 
+  
+  // Gumroad 商品链接 (等你注册好 Gumroad 后，把链接填在这里，现在是占位符)
   kitPaymentLink: "https://gumroad.com/", 
   audioPaymentLink: "https://gumroad.com/", 
-  // 联系方式
+  
+  // 联系方式 (已更新)
   contact: {
-    wechat: { link: "#", display: "ID: Theodora_CN" },
-    whatsapp: { link: "https://wa.me/1234567890", display: "+86 138 0000 0000" },
-    telegram: { link: "https://t.me/TheodoraShi", display: "@TheodoraShi" },
+    email: "s.1808218271@gmail.com",
+    wechat: { link: "#", display: "ID: Theodora-Shi" },
+    whatsapp: { link: "https://wa.me/855962105439", display: "+855 962105439" },
+    telegram: { link: "https://t.me/TheodoraShi", display: "+855 962105439" }, 
   }
 };
 
@@ -46,7 +51,7 @@ const App = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // 模拟日历状态 (仅用于展示设计效果，Framer中会被Calendly替代)
+  // 模拟日历状态 (用于视觉展示)
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("November 2024");
 
@@ -86,7 +91,7 @@ const App = () => {
 
           <div className="flex items-center space-x-4">
             <button 
-              onClick={() => scrollToSection(CONFIG.bookingSection)} 
+              onClick={() => scrollToSection(CONFIG.bookingSectionId)} 
               className={`hidden md:inline-flex px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}
             >
               Book A Chat
@@ -104,7 +109,7 @@ const App = () => {
             <a href={CONFIG.notionLink} target="_blank" rel="noopener noreferrer" className="block py-2 font-medium">Blogs</a>
             <button onClick={() => scrollToSection('services')} className="text-left py-2 font-medium">Services</button>
             <button onClick={() => scrollToSection('faq')} className="text-left py-2 font-medium">FAQ</button>
-            <button onClick={() => scrollToSection(CONFIG.bookingSection)} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
+            <button onClick={() => scrollToSection(CONFIG.bookingSectionId)} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
           </div>
         )}
       </nav>
@@ -189,7 +194,7 @@ const App = () => {
                    desc="Let's just talk. Tell me your travel dreams or business goals. No sales pitch, just 20 minutes of honest advice from a local friend."
                    features={["20-Min Video Call", "Itinerary Assessment", "Q&A Session"]}
                    cta="Book Free Chat"
-                   ctaLink={`#${CONFIG.bookingSection}`}
+                   ctaLink={`#${CONFIG.bookingSectionId}`}
                    highlight={false}
                 />
                 <ServiceTierCard 
@@ -211,7 +216,7 @@ const App = () => {
                    desc="For those who want a seamless, fully curated experience. I become your remote guardian and planner. Let's discuss your vision first."
                    features={["Custom Route Design", "24/7 Remote Guardian", "Restaurant/Ticket Booking"]}
                    cta="Start Conversation"
-                   ctaLink={`#${CONFIG.bookingSection}`}
+                   ctaLink={`#${CONFIG.bookingSectionId}`}
                    highlight={false}
                 />
              </div>
@@ -233,7 +238,7 @@ const App = () => {
                    desc="A relaxed 20-min chat to assess your level and learn your first 3 'survival' phrases perfectly. See if my teaching style fits you."
                    features={["Level Assessment", "Goal Setting", "Fun & Casual Vibe"]}
                    cta="Book Free Chat"
-                   ctaLink={`#${CONFIG.bookingSection}`}
+                   ctaLink={`#${CONFIG.bookingSectionId}`}
                    highlight={false}
                 />
                 <ServiceTierCard 
@@ -255,7 +260,7 @@ const App = () => {
                    desc="Serious about connecting? I offer long-term mentorship to help you navigate business or life in China with confidence."
                    features={["Custom Curriculum", "Weekly 1-on-1", "WeChat Text Practice"]}
                    cta="Apply for Mentorship"
-                   ctaLink={`#${CONFIG.bookingSection}`}
+                   ctaLink={`#${CONFIG.bookingSectionId}`}
                    highlight={false}
                 />
              </div>
@@ -286,7 +291,7 @@ const App = () => {
       </section>
 
       {/* --- 6. Booking / Contact (Calendly Area) --- */}
-      <section id={CONFIG.bookingSection} className="py-24 bg-stone-900 text-white">
+      <section id={CONFIG.bookingSectionId} className="py-24 bg-stone-900 text-white">
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
            
            {/* Left: Contact Info (Updated with Display Numbers) */}
@@ -295,6 +300,9 @@ const App = () => {
                 <h2 className="font-serif text-4xl mb-4">Let's Talk.</h2>
                 <p className="text-stone-300 text-lg">
                     The first step is just a conversation. Schedule a free chat to see if we're a good fit.
+                </p>
+                <p className="text-stone-400 text-sm mt-2">
+                   Email: {CONFIG.contact.email}
                 </p>
               </div>
               
@@ -344,13 +352,13 @@ const App = () => {
               </div>
            </div>
 
-           {/* Right: Calendly Embed Area (Simulated UI for Preview) */}
+           {/* Right: Calendly Embed Simulation */}
            <div className="bg-white text-stone-900 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px]">
               {/* Calendly Header Simulation */}
               <div className="p-6 border-b border-stone-100 flex justify-between items-center">
                  <div>
                     <h3 className="font-bold text-lg">Theodora Shi</h3>
-                    <p className="text-sm text-stone-500">Free Discovery Call (20 min)</p>
+                    <p className="text-sm text-stone-500">Free Discovery Call (30 min)</p>
                  </div>
                  <div className="text-stone-400"><Globe size={20}/></div>
               </div>
@@ -358,9 +366,9 @@ const App = () => {
               {/* Calendly Body Simulation */}
               <div className="flex-grow p-6 flex flex-col">
                   <div className="flex justify-between items-center mb-6">
-                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("October 2024")}><ChevronDown className="rotate-90" size={20}/></button>
+                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("December 2024")}><ChevronDown className="rotate-90" size={20}/></button>
                       <span className="font-bold text-lg">{currentMonth}</span>
-                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("December 2024")}><ChevronDown className="-rotate-90" size={20}/></button>
+                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("January 2025")}><ChevronDown className="-rotate-90" size={20}/></button>
                   </div>
                   
                   {/* Fake Calendar Grid */}
@@ -385,7 +393,7 @@ const App = () => {
 
                   {selectedDate && (
                       <div className="mt-auto animate-fade-in-up">
-                          <p className="text-xs text-center text-stone-500 mb-2">Selected: November {selectedDate}</p>
+                          <p className="text-xs text-center text-stone-500 mb-2">Selected: December {selectedDate}</p>
                           <div className="grid grid-cols-2 gap-2">
                             <button className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">10:00 AM</button>
                             <button className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">2:30 PM</button>
@@ -395,10 +403,20 @@ const App = () => {
                   
                   {!selectedDate && (
                       <div className="mt-auto text-center text-sm text-stone-400 py-4">
-                          Select a date to see available times
+                          Select a date above to check availability
                       </div>
                   )}
               </div>
+              
+              {/* Confirm Booking Button -> Links to Real Calendly */}
+              <a 
+                href={CONFIG.bookingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-red-700 text-white font-bold hover:bg-red-800 transition-all shadow-md flex justify-center items-center gap-2"
+              >
+                 Open Booking Calendar <ArrowRight size={18}/>
+              </a>
            </div>
 
         </div>
