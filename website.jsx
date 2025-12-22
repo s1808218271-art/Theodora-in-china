@@ -21,17 +21,20 @@ import {
   Phone,
   Coffee,
   Headphones,
-  User,
-  Copy
+  User
+  // 已删除未使用的 Copy 组件，防止报错
 } from 'lucide-react';
 
 // --- 配置区域 (你需要替换这里) ---
 const CONFIG = {
-  notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-...", 
+  // 个人博客/Notion 链接
+  notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862", 
+  // 预约板块的 ID (用于页面跳转)
   bookingSection: "booking-section", 
-  // Gumroad 商品链接示例: https://gumroad.com/l/your-survival-kit
-  kitPaymentLink: "https://gumroad.com/...", 
-  audioPaymentLink: "https://gumroad.com/...", 
+  // Gumroad 商品链接 (示例)
+  kitPaymentLink: "https://gumroad.com/", 
+  audioPaymentLink: "https://gumroad.com/", 
+  // 联系方式
   contact: {
     wechat: { link: "#", display: "ID: Theodora_CN" },
     whatsapp: { link: "https://wa.me/1234567890", display: "+86 138 0000 0000" },
@@ -437,7 +440,7 @@ const ServiceTierCard = ({ level, title, price, icon, desc, features, cta, ctaLi
      
      <a 
         href={ctaLink} 
-        target={ctaLink.startsWith('http') ? "_blank" : "_self"}
+        target={ctaLink && ctaLink.startsWith('http') ? "_blank" : "_self"}
         rel="noopener noreferrer"
         className={`block w-full py-3 text-sm font-bold rounded-lg text-center transition-colors ${highlight ? 'bg-red-700 text-white hover:bg-red-800' : 'bg-stone-200 text-stone-900 hover:bg-stone-300'}`}
      >
