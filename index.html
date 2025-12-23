@@ -17,7 +17,6 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-      /* small helper for simple animations used in the original app */
       @keyframes fade-in-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0);} }
       .animate-fade-in-up { animation: fade-in-up .6s ease both; }
       .animate-bounce { animation: bounce 1.5s infinite; }
@@ -28,8 +27,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-      // Minimal replacements for lucide-react icons used in X.
-      // Each component accepts size prop but returns a simple emoji or tiny SVG for stability.
+      // Minimal icon factory
       const IconFactory = (emoji) => ({ size = 18, className = '' }) =>
         React.createElement('span', { style: { fontSize: size, lineHeight: 1 }, className }, emoji);
 
@@ -55,13 +53,12 @@
       const Headphones = IconFactory('🎧');
       const User = IconFactory('👤');
 
-      // --- CONFIG from your original X, keep real links
       const CONFIG = {
         notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862",
         bookingLink: "https://calendly.com/s-1808218271/30min",
         bookingSectionId: "booking-section",
-        kitPaymentLink: "https://gumroad.com/",
-        audioPaymentLink: "https://gumroad.com/",
+        kitPaymentLink: "",
+        audioPaymentLink: "",
         contact: {
           email: "s.1808218271@gmail.com",
           wechat: { link: "#", display: "ID: Theodora-Shi" },
@@ -70,7 +67,6 @@
         }
       };
 
-      // ---------- Begin App component (X adapted) ----------
       const { useState, useEffect } = React;
 
       const App = () => {
@@ -79,17 +75,24 @@
         const [selectedDate, setSelectedDate] = useState(null);
         const [currentMonth, setCurrentMonth] = useState("November 2024");
 
+        // Calendly-style daily slots you configured
+        const dailySlots = [
+          "13:30 - 14:00",
+          "14:30 - 15:00",
+          "15:30 - 16:00",
+          "18:30 - 19:00",
+          "19:30 - 20:00",
+          "20:30 - 21:00"
+        ];
+
         useEffect(() => {
           const handleScroll = () => setIsScrolled(window.scrollY > 50);
           window.addEventListener('scroll', handleScroll);
           return () => window.removeEventListener('scroll', handleScroll);
         }, []);
 
-        const scrollToSection = (id) => {
-          setIsMobileMenuOpen(false);
-          const element = document.getElementById(id);
-          if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
+        // Open Calendly in new tab
+        const openBooking = () => window.open(CONFIG.bookingLink, '_blank', 'noopener');
 
         return (
           <div className="font-sans text-stone-800 bg-[#FAFAF9]">
@@ -103,13 +106,13 @@
                   <a href={CONFIG.notionLink} target="_blank" rel="noopener noreferrer" className="hover:opacity-70 transition-opacity flex items-center gap-1">
                     Blogs <ExternalLink size={12}/>
                   </a>
-                  <button onClick={() => scrollToSection('services')} className="hover:opacity-70 transition-opacity">Services</button>
-                  <button onClick={() => scrollToSection('faq')} className="hover:opacity-70 transition-opacity">FAQ</button>
+                  <button onClick={() => document.getElementById('services')?.scrollIntoView({behavior:'smooth'})} className="hover:opacity-70 transition-opacity">Services</button>
+                  <button onClick={() => document.getElementById('faq')?.scrollIntoView({behavior:'smooth'})} className="hover:opacity-70 transition-opacity">FAQ</button>
                 </div>
 
                 <div className="flex items-center space-x-4">
                   <button
-                    onClick={() => scrollToSection(CONFIG.bookingSectionId)}
+                    onClick={openBooking}
                     className={`hidden md:inline-flex px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}
                   >
                     Book A Chat
@@ -125,9 +128,9 @@
               {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 w-full bg-white text-stone-900 border-t border-stone-100 py-4 px-6 flex flex-col space-y-4 shadow-lg">
                   <a href={CONFIG.notionLink} target="_blank" rel="noopener noreferrer" className="block py-2 font-medium">Blogs</a>
-                  <button onClick={() => scrollToSection('services')} className="text-left py-2 font-medium">Services</button>
-                  <button onClick={() => scrollToSection('faq')} className="text-left py-2 font-medium">FAQ</button>
-                  <button onClick={() => scrollToSection(CONFIG.bookingSectionId)} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
+                  <button onClick={() => document.getElementById('services')?.scrollIntoView({behavior:'smooth'})} className="text-left py-2 font-medium">Services</button>
+                  <button onClick={() => document.getElementById('faq')?.scrollIntoView({behavior:'smooth'})} className="text-left py-2 font-medium">FAQ</button>
+                  <button onClick={openBooking} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
                 </div>
               )}
             </nav>
@@ -149,9 +152,7 @@
                 <p className="text-lg md:text-2xl text-stone-200 font-light tracking-wide">
                   Seamless Travel. Authentic Culture. Practical Language.
                 </p>
-                <div className="mt-10">
-                  <ChevronDown className="text-white mx-auto animate-bounce opacity-80" size={32} />
-                </div>
+                {/* Removed the small arrow icon as requested */}
               </div>
             </section>
 
@@ -165,22 +166,24 @@
                   <div className="w-12 h-1 bg-stone-900"></div>
 
                   <p className="text-stone-600 text-lg leading-relaxed">
-                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>. I founded this platform not as a big agency, but as a personal bridge. Whether you are here for business, adventure, or study, the biggest barrier isn't the distance—it's the information gap.
+                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>. I founded this platform not as a big agency, but as a personal bridge. Whether you are here for business, adventure, or study, the biggest barrier is the information gap.
                   </p>
                   <p className="text-stone-600 text-lg leading-relaxed">
                     My mission is simple: to be the trusted friend I wish I had when I first explored the world.
                   </p>
 
                   <blockquote className="border-l-4 border-red-700 pl-4 mt-6 italic text-stone-500 text-lg">
-                    "I believe the best way to see China isn't through a tour bus window, but through shared meals and real conversations."
+                    "I believe the best way to see China is through shared meals and real conversations."
                   </blockquote>
                 </div>
 
-                <div className="relative h-[500px] w-full bg-stone-100 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="relative h-[500px] w-full bg-stone-100 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center">
+                  <!-- Replace the src below with your photo file path or URL -->
                   <img
-                    src="https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop"
+                    src="./theodora-photo.jpg"
                     alt="Theodora"
-                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                    onError={(e)=>{ e.target.src = 'https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop'; }}
+                    className="max-w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
                   />
                 </div>
               </div>
@@ -202,24 +205,24 @@
                   <div className="grid md:grid-cols-3 gap-6">
                     <ServiceTierCard
                       level="Level 1: Connection"
-                      title="Coffee Chat"
+                      title="Coffee Chat - 30 min"
                       price="Free"
                       icon={<Coffee size={20} />}
-                      desc="Let's just talk. Tell me your travel dreams or business goals. No sales pitch, just 20 minutes of honest advice from a local friend."
-                      features={["20-Min Video Call", "Itinerary Assessment", "Q&A Session"]}
+                      desc="A relaxed 30-minute conversation to understand your travel goals and answer quick questions. No pressure, just practical local advice."
+                      features={["30-minute video call", "Quick itinerary tips", "Immediate travel advice"]}
                       cta="Book Free Chat"
-                      ctaLink={`#${CONFIG.bookingSectionId}`}
+                      ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
                     <ServiceTierCard
                       level="Level 2: Preparation"
                       title="Survival Kit"
-                      price="$4.99"
+                      price="Compact Pack"
                       icon={<Download size={20} />}
-                      desc="Ready to plan it yourself? Get my essential digital pack: App setup guides (Alipay/WeChat) + 50 Audio phrases to survive."
-                      features={["App Setup PDF Guide", "50 Audio Survival Phrases", "Culture Cheat Sheet"]}
-                      cta="Get the Kit"
-                      ctaLink={CONFIG.kitPaymentLink}
+                      desc="A compact, practical pack for travelers to China. Includes essential spoken Chinese phrases with downloadable audio, clear setup instructions for local apps, a short PDF guide with safety tips and pre-trip checklists, and concise city guides for popular destinations."
+                      features={["Essential spoken phrases with audio", "PDF checklists and safety tips", "Short city guides for popular destinations"]}
+                      cta="Learn More"
+                      ctaLink="#services"
                       highlight={true}
                     />
                     <ServiceTierCard
@@ -227,10 +230,10 @@
                       title="Signature Concierge"
                       price="By Request"
                       icon={<Star size={20} />}
-                      desc="For those who want a seamless, fully curated experience. I become your remote guardian and planner. Let's discuss your vision first."
-                      features={["Custom Route Design", "24/7 Remote Guardian", "Restaurant/Ticket Booking"]}
+                      desc="A fully personalized travel design service. I craft a private, end-to-end itinerary tailored to your interests, pace, and logistics. This includes curated experiences, local introductions, booking support, and a step-by-step plan so you arrive relaxed and ready to explore."
+                      features={["Custom itinerary design", "Local introductions and logistics support", "Curated experiences and bookings"]}
                       cta="Start Conversation"
-                      ctaLink={`#${CONFIG.bookingSectionId}`}
+                      ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
                   </div>
@@ -245,35 +248,35 @@
                   <div className="grid md:grid-cols-3 gap-6">
                     <ServiceTierCard
                       level="Level 1: Icebreaker"
-                      title="Language Chat"
+                      title="Language Chat - 30 min"
                       price="Free"
                       icon={<Coffee size={20} />}
-                      desc="A relaxed 20-min chat to assess your level and learn your first 3 'survival' phrases perfectly. See if my teaching style fits you."
-                      features={["Level Assessment", "Goal Setting", "Fun & Casual Vibe"]}
+                      desc="A relaxed 30-minute session to assess your level, set realistic goals, and practice a few survival phrases. Great for beginners or travelers."
+                      features={["30-minute assessment", "Goal setting", "Practical phrase practice"]}
                       cta="Book Free Chat"
-                      ctaLink={`#${CONFIG.bookingSectionId}`}
+                      ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
                     <ServiceTierCard
                       level="Level 2: Self-Study"
-                      title="Audio Survival Pack"
-                      price="$4.99"
+                      title="Audio Survival Pack - $9.99"
+                      price="$9.99"
                       icon={<Headphones size={20} />}
-                      desc="Learn strictly what you need to survive. Ordering food, taking taxis, and bargaining. No grammar, just utility."
-                      features={["100+ Scenario Audios", "Pinyin Cheat Sheet", "Slang Guide"]}
-                      cta="Download Pack"
-                      ctaLink={CONFIG.audioPaymentLink}
+                      desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering food and taking taxis."
+                      features={["Curated video lessons", "Downloadable audio drills", "Compact study notes"]}
+                      cta="Get the Pack"
+                      ctaLink="#services"
                       highlight={true}
                     />
                     <ServiceTierCard
-                      level="Level 3: Fluency"
-                      title="Private Mentorship"
+                      level="Level 3: Professional"
+                      title="Professional Chinese Program"
                       price="By Request"
                       icon={<User size={20} />}
-                      desc="Serious about connecting? I offer long-term mentorship to help you navigate business or life in China with confidence."
-                      features={["Custom Curriculum", "Weekly 1-on-1", "WeChat Text Practice"]}
-                      cta="Apply for Mentorship"
-                      ctaLink={`#${CONFIG.bookingSectionId}`}
+                      desc="Structured courses tailored to your objectives - travel, study abroad, or business. I design a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources so you become operational and confident fast."
+                      features={["Custom curriculum", "Live tutoring and practice", "Practical business or travel focus"]}
+                      cta="Apply for Program"
+                      ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
                   </div>
@@ -287,15 +290,15 @@
                 <div className="space-y-4">
                   <AccordionItem
                     question="Is your service a travel agency?"
-                    answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I don't book flights for commission. I provide the honest advice, route planning, and digital setup support that big agencies can't offer."
+                    answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I don't book flights for commission. I provide honest advice, route planning, and digital setup support that big agencies can't offer."
                   />
                   <AccordionItem
                     question="I don't speak any Chinese. Is the Survival Kit enough?"
-                    answer="For a short trip, yes! The kit is designed to get your phone set up (which is 80% of the battle) and give you the essential phrases to survive. For longer stays, I recommend a few coaching sessions."
+                    answer="For a short trip, yes. The kit is designed to get your phone set up and give you essential phrases to survive. For longer stays, I recommend a few coaching sessions."
                   />
                   <AccordionItem
                     question="How does the 'Remote Support' work?"
-                    answer="We connect on WeChat. If you get stuck in a taxi or can't read a menu, you send me a picture or voice note, and I translate or call the driver for you instantly. It's like having a friend in your pocket."
+                    answer="We connect on WeChat. If you get stuck in a taxi or can't read a menu, you send a picture or voice note, and I translate or call the driver for you. It's like having a friend in your pocket."
                   />
                 </div>
               </div>
@@ -307,7 +310,7 @@
                   <div>
                     <h2 className="font-serif text-4xl mb-4">Let's Talk.</h2>
                     <p className="text-stone-300 text-lg">
-                      The first step is just a conversation. Schedule a free chat to see if we're a good fit.
+                      The first step is just a conversation. Schedule a free chat to see if we are a good fit.
                     </p>
                     <p className="text-stone-400 text-sm mt-2">
                       Email: {CONFIG.contact.email}
@@ -319,8 +322,8 @@
                       <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-red-500 shrink-0"><Calendar /></div>
                       <div>
                         <p className="font-bold text-lg">Book a Video Chat</p>
-                        <p className="text-sm text-stone-400">Via Calendly (Zoom/Google Meet)</p>
-                        <p className="text-xs text-stone-500 mt-1">Select a time on the right ➜</p>
+                        <p className="text-sm text-stone-400">Via Calendly (Zoom or Google Meet)</p>
+                        <p className="text-xs text-stone-500 mt-1">Click the button on the right to open the booking calendar</p>
                       </div>
                     </div>
 
@@ -328,11 +331,10 @@
                       <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-red-500 shrink-0"><Phone /></div>
                       <div className="w-full">
                         <p className="font-bold text-lg mb-3">Direct Message</p>
-
                         <div className="space-y-3">
                           <a href={CONFIG.contact.whatsapp.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors group">
                             <div className="flex items-center gap-3">
-                              <MessageSquare size={18} className="text-green-500"/>
+                              <MessageSquare size={18}/>
                               <span className="text-sm font-medium">WhatsApp</span>
                             </div>
                             <span className="text-xs text-stone-400 group-hover:text-white transition-colors">{CONFIG.contact.whatsapp.display}</span>
@@ -340,7 +342,7 @@
 
                           <a href={CONFIG.contact.telegram.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors group">
                             <div className="flex items-center gap-3">
-                              <Send size={18} className="text-blue-400"/>
+                              <Send size={18}/>
                               <span className="text-sm font-medium">Telegram</span>
                             </div>
                             <span className="text-xs text-stone-400 group-hover:text-white transition-colors">{CONFIG.contact.telegram.display}</span>
@@ -348,7 +350,7 @@
 
                           <div className="flex items-center justify-between p-3 bg-stone-800 rounded-lg group cursor-default">
                             <div className="flex items-center gap-3">
-                              <MessageSquare size={18} className="text-green-600"/>
+                              <MessageSquare size={18}/>
                               <span className="text-sm font-medium">WeChat</span>
                             </div>
                             <span className="text-xs text-stone-400">{CONFIG.contact.wechat.display}</span>
@@ -378,6 +380,7 @@
                     <div className="grid grid-cols-7 gap-2 mb-4 text-center text-xs text-stone-400 font-medium">
                       <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
                     </div>
+
                     <div className="grid grid-cols-7 gap-2">
                       {[...Array(30)].map((_, i) => (
                         <button
@@ -398,27 +401,27 @@
                       <div className="mt-auto animate-fade-in-up">
                         <p className="text-xs text-center text-stone-500 mb-2">Selected: December {selectedDate}</p>
                         <div className="grid grid-cols-2 gap-2">
-                          <button className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">10:00 AM</button>
-                          <button className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">2:30 PM</button>
+                          {dailySlots.slice(0,2).map((s,i) => (
+                            <button key={i} className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">{s}</button>
+                          ))}
                         </div>
+                        <div className="mt-3 text-xs text-stone-500">Click "Open Booking Calendar" to confirm on Calendly.</div>
                       </div>
                     )}
 
                     {!selectedDate && (
                       <div className="mt-auto text-center text-sm text-stone-400 py-4">
-                        Select a date above to check availability
+                        Select a date above to preview available slots
                       </div>
                     )}
                   </div>
 
-                  <a
-                    href={CONFIG.bookingLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={openBooking}
                     className="w-full py-4 bg-red-700 text-white font-bold hover:bg-red-800 transition-all shadow-md flex justify-center items-center gap-2"
                   >
                     Open Booking Calendar <ArrowRight size={18}/>
-                  </a>
+                  </button>
                 </div>
               </div>
             </section>
@@ -430,7 +433,7 @@
         );
       };
 
-      // ServiceTierCard component
+      // ServiceTierCard
       const ServiceTierCard = ({ level, title, price, icon, desc, features, cta, ctaLink, highlight }) => (
         <div className={`p-8 rounded-xl border flex flex-col transition-all duration-300 ${highlight ? 'bg-white border-red-200 shadow-xl scale-105 z-10' : 'bg-[#FAFAF9] border-stone-200 hover:shadow-lg'}`}>
           <div className="mb-4 flex justify-between items-start">
@@ -467,7 +470,7 @@
         </div>
       );
 
-      // AccordionItem component
+      // AccordionItem
       const AccordionItem = ({ question, answer }) => {
         const [isOpen, setIsOpen] = useState(false);
         return (
@@ -486,10 +489,9 @@
         );
       };
 
-      // Mount the app
+      // Mount
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(React.createElement(App));
-      // ---------- End App ----------
     </script>
   </body>
 </html>
