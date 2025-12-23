@@ -27,7 +27,7 @@
         }
         .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
         
-        /* 隐藏滚动条但保留功能 (可选) */
+        /* 隐藏滚动条但保留功能 */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -43,8 +43,8 @@
             notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862",
             bookingLink: "https://calendly.com/s-1808218271/30min",
             instagramLink: "https://www.instagram.com/theodora_chineseteacher?igsh=MXd3NW56NHpsenp5ZA%3D%3D&utm_source=qr",
-            kitPaymentLink: "#", // 替换为您的 Gumroad 链接
-            audioPaymentLink: "#", // 替换为您的 Gumroad 链接
+            kitPaymentLink: "#", 
+            audioPaymentLink: "#", 
             contact: {
                 email: "s.1808218271@gmail.com",
                 wechat: { display: "ID: Theodora-Shi" },
@@ -53,7 +53,6 @@
             }
         };
 
-        // 图标组件封装
         const Icon = ({ name, size = 20, className = "" }) => {
             return <i data-lucide={name} style={{ width: size, height: size }} className={`inline-block ${className}`}></i>;
         };
@@ -63,37 +62,39 @@
             const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
             const [selectedDate, setSelectedDate] = useState(null);
             
-            // Calendly 时间段配置
             const dailySlots = [
-                "13:30 - 14:00",
-                "14:30 - 15:00",
-                "15:30 - 16:00",
-                "18:30 - 19:00",
-                "19:30 - 20:00",
-                "20:30 - 21:00"
+                "13:30 - 14:00", "14:30 - 15:00", "15:30 - 16:00",
+                "18:30 - 19:00", "19:30 - 20:00", "20:30 - 21:00"
             ];
 
             useEffect(() => {
                 const handleScroll = () => setIsScrolled(window.scrollY > 50);
                 window.addEventListener('scroll', handleScroll);
-                // 初始化图标
                 if (window.lucide) window.lucide.createIcons();
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
 
             useEffect(() => {
-                // 每次更新重新渲染图标
                 if (window.lucide) window.lucide.createIcons();
             });
 
             const scrollTo = (id) => {
                 const el = document.getElementById(id);
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
                 setIsMobileMenuOpen(false);
             };
 
-            // 在新标签页打开 Calendly (直接跳转逻辑)
-            const openBooking = () => window.open(CONFIG.bookingLink, '_blank', 'noopener,noreferrer');
+            // 核心修复：点击预约按钮不再直接打开新网页，而是跳转到页面底部的“Let's Talk”区域
+            const handleBookClick = () => {
+                scrollTo('booking-section');
+            };
+
+            // 真正的外部预约逻辑（仅在底部日历按钮处使用）
+            const finalizeBooking = () => {
+                window.open(CONFIG.bookingLink, '_blank', 'noopener,noreferrer');
+            };
 
             return (
                 <div className="text-stone-800">
@@ -101,11 +102,10 @@
                     {/* 1. 导航栏 */}
                     <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-4 text-stone-900' : 'bg-transparent py-6 text-white'}`}>
                         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-                            <div className="font-serif text-2xl font-bold tracking-tight cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                            <div className="font-serif text-2xl font-bold tracking-tight cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
                                 Theodora.
                             </div>
                             
-                            {/* 桌面菜单 */}
                             <div className="hidden md:flex space-x-8 text-sm font-medium">
                                 <a href={CONFIG.notionLink} target="_blank" className="hover:opacity-70 transition-opacity flex items-center gap-1">
                                     Blogs <Icon name="external-link" size={12}/>
@@ -114,13 +114,11 @@
                                 <button onClick={() => scrollTo('faq')} className="hover:opacity-70 transition-opacity">FAQ</button>
                             </div>
 
-                            {/* 按钮 & 移动端开关 */}
                             <div className="flex items-center space-x-4">
-                                {/* Book A Chat 按钮：直接打开 Calendly */}
-                                <button onClick={openBooking} className={`hidden md:inline-block px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}>
+                                <button onClick={handleBookClick} className={`hidden md:inline-block px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}>
                                     Book A Chat
                                 </button>
-                                <div className="md:hidden text-stone-900">
+                                <div className="md:hidden">
                                     <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
                                         <Icon name={isMobileMenuOpen ? "x" : "menu"} className={isScrolled ? "text-stone-900" : "text-white"} />
                                     </button>
@@ -128,13 +126,12 @@
                             </div>
                         </div>
 
-                        {/* 移动端菜单内容 */}
                         {isMobileMenuOpen && (
                             <div className="md:hidden absolute top-full left-0 w-full bg-white text-stone-900 border-t border-stone-100 py-4 px-6 flex flex-col space-y-4 shadow-lg">
                                 <a href={CONFIG.notionLink} target="_blank" className="block py-2 font-medium">Blogs</a>
                                 <button onClick={() => scrollTo('services')} className="text-left py-2 font-medium">Services</button>
                                 <button onClick={() => scrollTo('faq')} className="text-left py-2 font-medium">FAQ</button>
-                                <button onClick={openBooking} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
+                                <button onClick={handleBookClick} className="w-full py-3 bg-stone-900 text-white rounded-lg font-bold">Book A Chat</button>
                             </div>
                         )}
                     </nav>
@@ -149,54 +146,40 @@
                             <p className="text-xl text-stone-200 font-light max-w-2xl mx-auto italic">
                                 Seamless Travel. Authentic Culture. Practical Language.
                             </p>
+                            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                                <button onClick={handleBookClick} className="px-8 py-4 bg-red-700 text-white rounded-full font-bold hover:bg-red-800 transition-all shadow-xl">Start My Journey</button>
+                                <button onClick={() => scrollTo('services')} className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all">View Services</button>
+                            </div>
                         </div>
                     </section>
 
-                    {/* 3. About Section (增加了 Instagram 按钮) */}
+                    {/* 3. About Section */}
                     <section id="about" className="py-24 bg-white px-6">
                         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                             <div className="space-y-6">
                                 <span className="text-xs font-bold tracking-widest uppercase text-red-700">Theodora's Mission</span>
-                                <h2 className="font-serif text-4xl text-stone-900 leading-tight">
-                                    More than a guide.<br/>Your local friend.
-                                </h2>
+                                <h2 className="font-serif text-4xl text-stone-900 leading-tight">More than a guide.<br/>Your local friend.</h2>
                                 <div className="w-12 h-1 bg-stone-900"></div>
                                 <p className="text-stone-600 text-lg leading-relaxed">
-                                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>. I founded this platform not as a big agency, but as a personal bridge. Whether you are here for business, adventure, or study, the biggest barrier isn't the distance—it's the information gap.
+                                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>. I founded this platform not as a big agency, but as a personal bridge. My mission is simple: to be the trusted friend I wish I had when I first explored the world.
                                 </p>
-                                <p className="text-stone-600 text-lg leading-relaxed">
-                                    My mission is simple: to be the trusted friend I wish I had when I first explored the world.
-                                </p>
-                                <blockquote className="border-l-4 border-red-700 pl-4 mt-6 italic text-stone-500 text-lg">
-                                    "I believe the best way to see China isn't through a tour bus window, but through shared meals and real conversations."
-                                </blockquote>
-                                
-                                {/* 新增：Instagram 按钮 */}
                                 <div className="pt-4">
-                                    <a 
-                                        href={CONFIG.instagramLink} 
-                                        target="_blank" 
-                                        className="inline-flex items-center gap-2 px-6 py-3 bg-red-700 text-white rounded-full font-bold hover:bg-red-800 transition-all shadow-md hover:-translate-y-1"
-                                    >
-                                        <Icon name="instagram" size={18} />
-                                        Connect on Instagram
+                                    <a href={CONFIG.instagramLink} target="_blank" className="inline-flex items-center gap-2 px-6 py-3 bg-red-700 text-white rounded-full font-bold hover:bg-red-800 transition-all shadow-md">
+                                        <Icon name="instagram" size={18} /> Connect on Instagram
                                     </a>
                                 </div>
                             </div>
-                            
-                            {/* Photo Slot */}
-                            <div className="relative h-[500px] w-full bg-stone-100 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center">
+                            <div className="relative h-[500px] w-full bg-stone-100 rounded-2xl overflow-hidden shadow-2xl">
                                 <img 
-                                    src="./theodora-photo.jpg" 
+                                    src="https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop" 
                                     alt="Theodora" 
-                                    onError={(e)=>{ e.target.src = 'https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop'; }}
-                                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                                    className="w-full h-full object-cover" 
                                 />
                             </div>
                         </div>
                     </section>
 
-                    {/* 4. Services Section (所有按钮直接跳转 Calendly) */}
+                    {/* 4. Services Section */}
                     <section id="services" className="py-24 bg-[#FAFAF9] px-6">
                         <div className="max-w-6xl mx-auto">
                             <div className="text-center mb-20">
@@ -204,90 +187,56 @@
                                 <p className="text-stone-500 mt-4">Connect first, explore later. Start simple.</p>
                             </div>
 
-                            {/* Path 1: China Travel */}
                             <div className="mb-24">
                                 <div className="flex items-center gap-4 mb-10">
                                     <div className="p-3 bg-stone-900 text-white rounded-full flex items-center justify-center w-12 h-12"><Icon name="compass" /></div>
                                     <h3 className="font-serif text-3xl text-stone-900">Path 1: China Travel</h3>
                                 </div>
                                 <div className="grid md:grid-cols-3 gap-6">
-                                    {/* Level 1 */}
                                     <ServiceCard 
-                                        level="Level 1: Connection"
-                                        title="Coffee Chat - 30 min"
-                                        price="Free"
-                                        icon={<Icon name="coffee" />}
-                                        desc="A relaxed 30-minute conversation to understand your travel goals and answer quick questions. No pressure, just practical local advice."
-                                        features={["30-minute video call", "Quick itinerary tips", "Immediate travel advice"]}
-                                        cta="Book Free Chat"
-                                        onClick={openBooking} 
+                                        level="Level 1" title="Coffee Chat" price="Free" icon={<Icon name="coffee" />}
+                                        desc="A relaxed 30-minute conversation to understand your travel goals."
+                                        features={["30-minute video call", "Quick itinerary tips"]}
+                                        cta="Book Free Chat" onClick={handleBookClick} 
                                     />
-                                    {/* Level 2 */}
                                     <ServiceCard 
-                                        level="Level 2: Preparation"
-                                        title="Survival Kit"
-                                        price="$4.99"
-                                        icon={<Icon name="download" />}
-                                        desc="A compact, practical pack for travelers to China. Includes essential spoken Chinese phrases with downloadable audio, clear setup instructions for local apps, a short PDF guide with safety tips and pre-trip checklists, and concise city guides for popular destinations."
-                                        features={["Essential spoken phrases + audio", "PDF checklists & safety tips", "Short city guides"]}
-                                        cta="Get the Kit"
-                                        href={CONFIG.kitPaymentLink}
-                                        highlight
+                                        level="Level 2" title="Survival Kit" price="$4.99" icon={<Icon name="download" />}
+                                        desc="Essential phrases and app setups for China travelers."
+                                        features={["Audio phrases", "App guide"]}
+                                        cta="Get the Kit" href={CONFIG.kitPaymentLink} highlight
                                     />
-                                    {/* Level 3 */}
                                     <ServiceCard 
-                                        level="Level 3: Experience"
-                                        title="Signature Concierge"
-                                        price="By Request"
-                                        icon={<Icon name="star" />}
-                                        desc="A fully personalized travel design service. I craft a private, end-to-end itinerary tailored to your interests, pace, and logistics. This includes curated experiences, local introductions, booking support, and a step-by-step plan so you arrive relaxed and ready to explore."
-                                        features={["Custom itinerary design", "Local introductions & support", "Curated experiences"]}
-                                        cta="Start Conversation"
-                                        onClick={openBooking} 
+                                        level="Level 3" title="Signature Concierge" price="By Request" icon={<Icon name="star" />}
+                                        desc="Fully personalized travel design and support."
+                                        features={["Custom itinerary", "Booking support"]}
+                                        cta="Start Conversation" onClick={handleBookClick} 
                                     />
                                 </div>
                             </div>
 
-                            {/* Path 2: Chinese Learning */}
                             <div>
                                 <div className="flex items-center gap-4 mb-10">
                                     <div className="p-3 bg-red-700 text-white rounded-full flex items-center justify-center w-12 h-12"><Icon name="message-square" /></div>
                                     <h3 className="font-serif text-3xl text-stone-900">Path 2: Real-World Chinese</h3>
                                 </div>
                                 <div className="grid md:grid-cols-3 gap-6">
-                                    {/* Level 1 */}
                                     <ServiceCard 
-                                        level="Level 1: Icebreaker"
-                                        title="Language Chat - 30 min"
-                                        price="Free"
-                                        icon={<Icon name="coffee" />}
-                                        desc="A relaxed 30-minute session to assess your level, set realistic goals, and practice a few survival phrases. Great for beginners or curious travelers."
-                                        features={["30-minute assessment", "Goal setting", "Practical phrase practice"]}
-                                        cta="Book Free Chat"
-                                        onClick={openBooking} 
+                                        level="Level 1" title="Language Chat" price="Free" icon={<Icon name="coffee" />}
+                                        desc="Assess your level and set realistic learning goals."
+                                        features={["Level assessment", "Goal setting"]}
+                                        cta="Book Free Chat" onClick={handleBookClick} 
                                     />
-                                    {/* Level 2 */}
                                     <ServiceCard 
-                                        level="Level 2: Self-Study"
-                                        title="Audio Survival Pack"
-                                        price="$9.99"
-                                        icon={<Icon name="headphones" />}
-                                        desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering meals, taking taxis, and asking for directions."
-                                        features={["Curated video lessons", "Downloadable audio drills", "Compact study notes"]}
-                                        cta="Get the Pack"
-                                        href={CONFIG.audioPaymentLink}
-                                        highlight
+                                        level="Level 2" title="Audio Survival Pack" price="$9.99" icon={<Icon name="headphones" />}
+                                        desc="Beginner-friendly learning bundle for real situations."
+                                        features={["Video lessons", "Audio drills"]}
+                                        cta="Get the Pack" href={CONFIG.audioPaymentLink} highlight
                                     />
-                                    {/* Level 3 */}
                                     <ServiceCard 
-                                        level="Level 3: Professional"
-                                        title="Professional Chinese Program"
-                                        price="By Request"
-                                        icon={<Icon name="user" />}
-                                        desc="Structured courses tailored to your objectives - short-term travel, study abroad, or business. I build a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources to make you operational fast and confident in real contexts."
-                                        features={["Custom curriculum", "Live tutoring & practice", "Business/Travel focus"]}
-                                        cta="Apply for Program"
-                                        onClick={openBooking} 
+                                        level="Level 3" title="Professional Program" price="By Request" icon={<Icon name="user" />}
+                                        desc="Structured courses tailored to your objectives."
+                                        features={["Custom curriculum", "Live tutoring"]}
+                                        cta="Apply for Program" onClick={handleBookClick} 
                                     />
                                 </div>
                             </div>
@@ -299,14 +248,13 @@
                         <div className="max-w-3xl mx-auto">
                             <h2 className="font-serif text-3xl text-stone-900 mb-10 text-center">Common Questions</h2>
                             <div className="space-y-4">
-                                <AccordionItem question="Is your service a travel agency?" answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I don't book flights for commission. I provide honest advice, route planning, and digital setup support that big agencies can't offer." />
-                                <AccordionItem question="I don't speak any Chinese. Is the Survival Kit enough?" answer="For a short trip, yes. The kit is designed to get your phone set up and give you essential phrases to survive. For longer stays, I recommend a few coaching sessions." />
-                                <AccordionItem question="How does the 'Remote Support' work?" answer="We connect on WeChat. If you get stuck in a taxi or can't read a menu, you send a picture or voice note, and I translate or call the driver for you. It's like having a friend in your pocket." />
+                                <AccordionItem question="Is your service a travel agency?" answer="No, I am a personalized consultant. I provide honest advice and setup support that big agencies can't offer." />
+                                <AccordionItem question="How does the 'Remote Support' work?" answer="We connect on WeChat. If you get stuck, you send a message, and I assist you in real-time." />
                             </div>
                         </div>
                     </section>
 
-                    {/* 6. Booking / Contact Section (布局已修改：联系方式 2x2 排列) */}
+                    {/* 6. Contact Section (Let's Talk) */}
                     <section id="booking-section" className="py-24 bg-stone-900 text-white px-6">
                         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
                             <div className="space-y-10">
@@ -315,103 +263,77 @@
                                     <p className="text-stone-300 text-lg">The first step is just a conversation. Schedule a free chat to see if we are a good fit.</p>
                                 </div>
                                 
-                                {/* 修改：联系方式 2x2 网格排列 */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <a href={`mailto:${CONFIG.contact.email}`} className="bg-stone-800 p-4 rounded-xl hover:bg-stone-700 transition-colors">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="text-red-500"><Icon name="mail" /></span>
-                                            <span className="font-bold text-sm">Email</span>
-                                        </div>
-                                        <span className="text-xs text-stone-400 break-words">{CONFIG.contact.email}</span>
+                                        <div className="flex items-center gap-2 mb-2"><Icon name="mail" className="text-red-500" size={16}/><span className="font-bold text-sm">Email</span></div>
+                                        <span className="text-[10px] text-stone-400 break-all">{CONFIG.contact.email}</span>
                                     </a>
-                                    
                                     <div className="bg-stone-800 p-4 rounded-xl">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="text-green-600"><Icon name="message-square" /></span>
-                                            <span className="font-bold text-sm">WeChat</span>
-                                        </div>
-                                        <span className="text-xs text-stone-400">{CONFIG.contact.wechat.display}</span>
+                                        <div className="flex items-center gap-2 mb-2"><Icon name="message-circle" className="text-green-500" size={16}/><span className="font-bold text-sm">WeChat</span></div>
+                                        <span className="text-[10px] text-stone-400">{CONFIG.contact.wechat.display}</span>
                                     </div>
-
                                     <a href={CONFIG.contact.whatsapp.link} target="_blank" className="bg-stone-800 p-4 rounded-xl hover:bg-stone-700 transition-colors">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="text-green-500"><Icon name="phone" /></span>
-                                            <span className="font-bold text-sm">WhatsApp</span>
-                                        </div>
-                                        <span className="text-xs text-stone-400">{CONFIG.contact.whatsapp.display}</span>
+                                        <div className="flex items-center gap-2 mb-2"><Icon name="phone" className="text-green-500" size={16}/><span className="font-bold text-sm">WhatsApp</span></div>
+                                        <span className="text-[10px] text-stone-400">{CONFIG.contact.whatsapp.display}</span>
                                     </a>
-
                                     <a href={CONFIG.contact.telegram.link} target="_blank" className="bg-stone-800 p-4 rounded-xl hover:bg-stone-700 transition-colors">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className="text-blue-400"><Icon name="send" /></span>
-                                            <span className="font-bold text-sm">Telegram</span>
-                                        </div>
-                                        <span className="text-xs text-stone-400">{CONFIG.contact.telegram.display}</span>
+                                        <div className="flex items-center gap-2 mb-2"><Icon name="send" className="text-blue-400" size={16}/><span className="font-bold text-sm">Telegram</span></div>
+                                        <span className="text-[10px] text-stone-400">{CONFIG.contact.telegram.display}</span>
                                     </a>
                                 </div>
                             </div>
 
-                            {/* Simulated Calendar UI */}
+                            {/* Calendar UI */}
                             <div className="bg-white text-stone-900 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[600px]">
                                 <div className="p-6 border-b border-stone-100 flex justify-between items-center">
                                     <div>
                                         <h3 className="font-bold text-lg">Theodora Shi</h3>
-                                        <p className="text-sm text-stone-500">Free Discovery Call (30 min)</p>
+                                        <p className="text-xs text-stone-500">Free Discovery Call (30 min)</p>
                                     </div>
-                                    <div className="text-stone-400"><Icon name="globe" /></div>
+                                    <Icon name="calendar" className="text-stone-300" />
                                 </div>
-                                <div className="flex-grow p-6 flex flex-col">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <span className="font-bold text-lg">Select Date & Time</span>
-                                    </div>
-                                    {/* 模拟日期网格 */}
-                                    <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs text-stone-400 font-medium">
-                                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                                <div className="flex-grow p-6 flex flex-col overflow-hidden">
+                                    <div className="grid grid-cols-7 gap-2 mb-2 text-center text-[10px] text-stone-400 font-bold">
+                                        <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
                                     </div>
                                     <div className="grid grid-cols-7 gap-2">
-                                        {[...Array(30)].map((_, i) => (
+                                        {[...Array(31)].map((_, i) => (
                                             <button key={i} onClick={() => setSelectedDate(i+1)} 
-                                                className={`h-9 w-9 rounded-full flex items-center justify-center text-sm transition-all ${selectedDate === i+1 ? 'bg-red-700 text-white font-bold' : 'text-stone-700 hover:bg-stone-100'}`}>
+                                                className={`h-8 w-8 rounded-full flex items-center justify-center text-xs transition-all ${selectedDate === i+1 ? 'bg-red-700 text-white font-bold' : 'text-stone-700 hover:bg-stone-100'}`}>
                                                 {i+1}
                                             </button>
                                         ))}
                                     </div>
-                                    
-                                    {/* 显示时间段 */}
                                     <div className="mt-6 flex-grow overflow-y-auto">
                                         {selectedDate ? (
                                             <div className="space-y-2 animate-fade-in-up">
-                                                <p className="text-xs text-center text-stone-500 mb-2">Available slots for Dec {selectedDate}:</p>
+                                                <p className="text-xs text-center text-stone-500 font-medium">Available slots for Dec {selectedDate}:</p>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {dailySlots.map((slot, idx) => (
-                                                        <div key={idx} className="py-2 border border-red-700 text-red-700 rounded text-center text-xs font-medium cursor-default">{slot}</div>
+                                                        <div key={idx} className="py-2 border border-red-700 text-red-700 rounded text-[10px] text-center font-bold cursor-default">{slot}</div>
                                                     ))}
                                                 </div>
-                                                <div className="mt-3 text-xs text-stone-400 text-center">Click button below to confirm on Calendly</div>
                                             </div>
                                         ) : (
-                                            <div className="h-full flex items-center justify-center text-stone-400 text-sm">
-                                                Select a date to view slots
-                                            </div>
+                                            <div className="h-full flex items-center justify-center text-stone-400 text-xs italic">Select a date to preview availability</div>
                                         )}
                                     </div>
                                 </div>
-                                <button onClick={openBooking} className="w-full py-4 bg-red-700 text-white font-bold hover:bg-red-800 transition-all flex justify-center items-center gap-2">
-                                    Open Booking Calendar <Icon name="arrow-right" size={18}/>
+                                <button onClick={finalizeBooking} className="w-full py-4 bg-red-700 text-white font-bold hover:bg-red-800 transition-all flex justify-center items-center gap-2">
+                                    Go to Calendly to Confirm <Icon name="external-link" size={16}/>
                                 </button>
                             </div>
                         </div>
                     </section>
 
-                    <footer className="bg-stone-950 text-stone-600 py-8 text-center text-sm border-t border-stone-900">
+                    <footer className="bg-stone-950 text-stone-600 py-12 text-center text-xs">
                         <p>&copy; 2024 Theodora. Connecting Cultures.</p>
                     </footer>
                 </div>
             );
         };
 
-        // --- 子组件 ---
-        const ServiceCard = ({ level, title, price, icon, desc, features, cta, ctaLink, href, onClick, highlight }) => (
+        const ServiceCard = ({ level, title, price, icon, desc, features, cta, href, onClick, highlight }) => (
             <div className={`p-8 rounded-xl border flex flex-col transition-all duration-300 ${highlight ? 'bg-white border-red-200 shadow-xl scale-105 z-10' : 'bg-[#FAFAF9] border-stone-200 hover:shadow-lg'}`}>
                 <div className="mb-4 flex justify-between items-start">
                     <div>
