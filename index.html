@@ -146,10 +146,6 @@
                             <p className="text-xl text-stone-200 font-light max-w-2xl mx-auto italic">
                                 Seamless Travel. Authentic Culture. Practical Language.
                             </p>
-                            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                                <button onClick={handleBookClick} className="px-8 py-4 bg-red-700 text-white rounded-full font-bold hover:bg-red-800 transition-all shadow-xl">Start My Journey</button>
-                                <button onClick={() => scrollTo('services')} className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full font-bold hover:bg-white/20 transition-all">View Services</button>
-                            </div>
                         </div>
                     </section>
 
@@ -161,8 +157,11 @@
                                 <h2 className="font-serif text-4xl text-stone-900 leading-tight">More than a guide.<br/>Your local friend.</h2>
                                 <div className="w-12 h-1 bg-stone-900"></div>
                                 <p className="text-stone-600 text-lg leading-relaxed">
-                                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>. I founded this platform not as a big agency, but as a personal bridge. My mission is simple: to be the trusted friend I wish I had when I first explored the world.
-                                </p>
+                                    Hi, I'm <span className="font-bold text-stone-900">Theodora</span>.Hi, I'm Theodora. I founded this platform not as a big agency, but as a personal bridge. Whether you are here for business, adventure, or study, the biggest barrier isn't the distance—it's the information gap.
+
+My mission is simple: to be the trusted friend I wish I had when I first explored the world.
+
+"I believe the best way to see China isn't through a tour bus window, but through shared meals and real conversations."
                                 <div className="pt-4">
                                     <a href={CONFIG.instagramLink} target="_blank" className="inline-flex items-center gap-2 px-6 py-3 bg-red-700 text-white rounded-full font-bold hover:bg-red-800 transition-all shadow-md">
                                         <Icon name="instagram" size={18} /> Connect on Instagram
@@ -195,20 +194,20 @@
                                 <div className="grid md:grid-cols-3 gap-6">
                                     <ServiceCard 
                                         level="Level 1" title="Coffee Chat" price="Free" icon={<Icon name="coffee" />}
-                                        desc="A relaxed 30-minute conversation to understand your travel goals."
-                                        features={["30-minute video call", "Quick itinerary tips"]}
+                                        desc="A relaxed 30-minute conversation to understand your travel goals and answer quick questions. No pressure, just practical local advice."
+                                        features={["30-minute video call", "Quick itinerary tips","Immediate travel advice"]}
                                         cta="Book Free Chat" onClick={handleBookClick} 
                                     />
                                     <ServiceCard 
                                         level="Level 2" title="Survival Kit" price="$4.99" icon={<Icon name="download" />}
-                                        desc="Essential phrases and app setups for China travelers."
-                                        features={["Audio phrases", "App guide"]}
+                                        desc="A compact, practical pack for travelers to China. Includes essential spoken Chinese phrases with downloadable audio, clear setup instructions for local apps, a short PDF guide with safety tips and pre-trip checklists, and concise city guides for popular destinations.."
+                                        features={["Essential spoken phrases + audio", "PDF checklists & safety tips","Short city guides"]}
                                         cta="Get the Kit" href={CONFIG.kitPaymentLink} highlight
                                     />
                                     <ServiceCard 
                                         level="Level 3" title="Signature Concierge" price="By Request" icon={<Icon name="star" />}
-                                        desc="Fully personalized travel design and support."
-                                        features={["Custom itinerary", "Booking support"]}
+                                        desc="A fully personalized travel design service. I craft a private, end-to-end itinerary tailored to your interests, pace, and logistics. This includes curated experiences, local introductions, booking support, and a step-by-step plan so you arrive relaxed and ready to explore."
+                                        features={["Custom itinerary design", "Professional introductions & support"."Curated experiences"]}
                                         cta="Start Conversation" onClick={handleBookClick} 
                                     />
                                 </div>
@@ -222,20 +221,20 @@
                                 <div className="grid md:grid-cols-3 gap-6">
                                     <ServiceCard 
                                         level="Level 1" title="Language Chat" price="Free" icon={<Icon name="coffee" />}
-                                        desc="Assess your level and set realistic learning goals."
-                                        features={["Level assessment", "Goal setting"]}
+                                        desc="A relaxed 30-minute session to assess your level, set realistic goals, and practice a few survival phrases. Great for beginners or curious travelers."
+                                        features={["30-minute assessment", "Goal setting", "Practical phrase practice"]}
                                         cta="Book Free Chat" onClick={handleBookClick} 
                                     />
                                     <ServiceCard 
                                         level="Level 2" title="Audio Survival Pack" price="$9.99" icon={<Icon name="headphones" />}
-                                        desc="Beginner-friendly learning bundle for real situations."
-                                        features={["Video lessons", "Audio drills"]}
+                                        desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering meals, taking taxis, and asking for directions."
+                                        features={["Curated video lessons", "Downloadable audio drills", "Compact study notes"]}
                                         cta="Get the Pack" href={CONFIG.audioPaymentLink} highlight
                                     />
                                     <ServiceCard 
-                                        level="Level 3" title="Professional Program" price="By Request" icon={<Icon name="user" />}
-                                        desc="Structured courses tailored to your objectives."
-                                        features={["Custom curriculum", "Live tutoring"]}
+                                        level="Level 3" title="Professional Chinese Program" price="By Request" icon={<Icon name="user" />}
+                                        desc="Structured courses tailored to your objectives - short-term travel, study abroad, or business. I build a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources to make you operational fast and confident in real contexts."
+                                        features={["Custom curriculum", "Live tutoring & practice", "Business/Travel focus"]}
                                         cta="Apply for Program" onClick={handleBookClick} 
                                     />
                                 </div>
@@ -248,8 +247,9 @@
                         <div className="max-w-3xl mx-auto">
                             <h2 className="font-serif text-3xl text-stone-900 mb-10 text-center">Common Questions</h2>
                             <div className="space-y-4">
-                                <AccordionItem question="Is your service a travel agency?" answer="No, I am a personalized consultant. I provide honest advice and setup support that big agencies can't offer." />
-                                <AccordionItem question="How does the 'Remote Support' work?" answer="We connect on WeChat. If you get stuck, you send a message, and I assist you in real-time." />
+                                <AccordionItem question="Is your service a travel agency?" answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I don't book flights for commission. I provide honest advice, route planning, and digital setup support that big agencies can't offer." />
+                                <AccordionItem question="How does the 'Remote Support' work?" answer="We can connect on WeChat/Whatsapp/Telegram. If you get stuck in a taxi or can't read a menu, you send a picture or voice note, and I translate or call the driver for you. It's like having a friend in your pocket." />
+                                <AccordionItem question="I don't speak any Chinese. Is the Survival Kit enough?" answer="For a short trip, yes. The kit is designed to get your phone set up and give you essential phrases to survive. For longer stays, I recommend a few coaching sessions." />
                             </div>
                         </div>
                     </section>
