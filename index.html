@@ -43,8 +43,8 @@
             notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862",
             bookingLink: "https://calendly.com/s-1808218271/30min",
             instagramLink: "https://www.instagram.com/theodora_chineseteacher?igsh=MXd3NW56NHpsenp5ZA%3D%3D&utm_source=qr",
-            kitPaymentLink: "#", // 替换为您的 Gumroad 链接
-            audioPaymentLink: "#", // 替换为您的 Gumroad 链接
+            kitPaymentLink: "https://gumroad.com/",
+            audioPaymentLink: "https://gumroad.com/",
             contact: {
                 email: "s.1808218271@gmail.com",
                 wechat: { display: "ID: Theodora-Shi" },
@@ -62,6 +62,7 @@
             const [isScrolled, setIsScrolled] = useState(false);
             const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
             const [selectedDate, setSelectedDate] = useState(null);
+            const [selectedSlot, setSelectedSlot] = useState(null);
             
             // Calendly 时间段配置
             const dailySlots = [
@@ -95,6 +96,20 @@
             // 在新标签页打开 Calendly (直接跳转逻辑)
             const openBooking = () => window.open(CONFIG.bookingLink, '_blank', 'noopener,noreferrer');
 
+            // bookAndScroll 保持用于 CTA（继续滚动并打开 Calendly）
+            const bookAndScroll = () => {
+                setIsMobileMenuOpen(false);
+                const el = document.getElementById('booking-section');
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        window.open(CONFIG.bookingLink, '_blank', 'noopener,noreferrer');
+                    }, 600);
+                } else {
+                    window.open(CONFIG.bookingLink, '_blank', 'noopener,noreferrer');
+                }
+            };
+
             return (
                 <div className="text-stone-800">
                     
@@ -116,8 +131,8 @@
 
                             {/* 按钮 & 移动端开关 */}
                             <div className="flex items-center space-x-4">
-                                {/* Book A Chat 按钮：直接打开 Calendly */}
-                                <button onClick={openBooking} className={`hidden md:inline-block px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}>
+                                {/* Book A Chat 按钮：只滚动到 booking-section（不直接打开 Calendly） */}
+                                <button onClick={() => scrollTo('booking-section')} className={`hidden md:inline-block px-6 py-2 text-sm font-medium rounded-full transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-700' : 'bg-white text-stone-900 hover:bg-stone-200'}`}>
                                     Book A Chat
                                 </button>
                                 <div className="md:hidden text-stone-900">
@@ -134,7 +149,8 @@
                                 <a href={CONFIG.notionLink} target="_blank" className="block py-2 font-medium">Blogs</a>
                                 <button onClick={() => scrollTo('services')} className="text-left py-2 font-medium">Services</button>
                                 <button onClick={() => scrollTo('faq')} className="text-left py-2 font-medium">FAQ</button>
-                                <button onClick={openBooking} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
+                                {/* 移动端 Book A Chat 也改为只滚动 */}
+                                <button onClick={() => scrollTo('booking-section')} className="w-full py-3 bg-stone-900 text-white rounded-lg">Book A Chat</button>
                             </div>
                         )}
                     </nav>
@@ -196,7 +212,7 @@
                         </div>
                     </section>
 
-                    {/* 4. Services Section (所有按钮直接跳转 Calendly) */}
+                    {/* 4. Services Section (所有按钮直接跳转到 booking-section 并打开 Calendly) */}
                     <section id="services" className="py-24 bg-[#FAFAF9] px-6">
                         <div className="max-w-6xl mx-auto">
                             <div className="text-center mb-20">
@@ -220,7 +236,7 @@
                                         desc="A relaxed 30-minute conversation to understand your travel goals and answer quick questions. No pressure, just practical local advice."
                                         features={["30-minute video call", "Quick itinerary tips", "Immediate travel advice"]}
                                         cta="Book Free Chat"
-                                        onClick={openBooking} 
+                                        onClick={bookAndScroll} 
                                     />
                                     {/* Level 2 */}
                                     <ServiceCard 
@@ -243,7 +259,7 @@
                                         desc="A fully personalized travel design service. I craft a private, end-to-end itinerary tailored to your interests, pace, and logistics. This includes curated experiences, local introductions, booking support, and a step-by-step plan so you arrive relaxed and ready to explore."
                                         features={["Custom itinerary design", "Local introductions & support", "Curated experiences"]}
                                         cta="Start Conversation"
-                                        onClick={openBooking} 
+                                        onClick={bookAndScroll} 
                                     />
                                 </div>
                             </div>
@@ -264,7 +280,7 @@
                                         desc="A relaxed 30-minute session to assess your level, set realistic goals, and practice a few survival phrases. Great for beginners or curious travelers."
                                         features={["30-minute assessment", "Goal setting", "Practical phrase practice"]}
                                         cta="Book Free Chat"
-                                        onClick={openBooking} 
+                                        onClick={bookAndScroll} 
                                     />
                                     {/* Level 2 */}
                                     <ServiceCard 
@@ -272,7 +288,7 @@
                                         title="Audio Survival Pack"
                                         price="$9.99"
                                         icon={<Icon name="headphones" />}
-                                        desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering meals, taking taxis, and asking for directions."
+                                        desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering meals and taking taxis."
                                         features={["Curated video lessons", "Downloadable audio drills", "Compact study notes"]}
                                         cta="Get the Pack"
                                         href={CONFIG.audioPaymentLink}
@@ -287,7 +303,7 @@
                                         desc="Structured courses tailored to your objectives - short-term travel, study abroad, or business. I build a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources to make you operational fast and confident in real contexts."
                                         features={["Custom curriculum", "Live tutoring & practice", "Business/Travel focus"]}
                                         cta="Apply for Program"
-                                        onClick={openBooking} 
+                                        onClick={bookAndScroll} 
                                     />
                                 </div>
                             </div>
@@ -341,7 +357,7 @@
                                         <span className="text-xs text-stone-400">{CONFIG.contact.whatsapp.display}</span>
                                     </a>
 
-                                    <a href={CONFIG.contact.telegram.link} target="_blank" className="bg-stone-800 p-4 rounded-xl hover:bg-stone-700 transition-colors">
+                                    <a href={CONFIG.contact.telegram.link} target="_blank" className="bg-stone-800 p-4 rounded-xl transition-colors hover:bg-stone-700">
                                         <div className="flex items-center gap-3 mb-2">
                                             <span className="text-blue-400"><Icon name="send" /></span>
                                             <span className="font-bold text-sm">Telegram</span>
@@ -364,13 +380,19 @@
                                     <div className="flex justify-between items-center mb-6">
                                         <span className="font-bold text-lg">Select Date & Time</span>
                                     </div>
-                                    {/* 模拟日期网格 */}
+                                    {/* 模拟日期网格 - 修正：让星期标题与日期格子对齐 */}
                                     <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs text-stone-400 font-medium">
-                                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                                        <div className="h-9 flex items-center justify-center">M</div>
+                                        <div className="h-9 flex items-center justify-center">T</div>
+                                        <div className="h-9 flex items-center justify-center">W</div>
+                                        <div className="h-9 flex items-center justify-center">T</div>
+                                        <div className="h-9 flex items-center justify-center">F</div>
+                                        <div className="h-9 flex items-center justify-center">S</div>
+                                        <div className="h-9 flex items-center justify-center">S</div>
                                     </div>
                                     <div className="grid grid-cols-7 gap-2">
                                         {[...Array(30)].map((_, i) => (
-                                            <button key={i} onClick={() => setSelectedDate(i+1)} 
+                                            <button key={i} onClick={() => { setSelectedDate(i+1); setSelectedSlot(null); }} 
                                                 className={`h-9 w-9 rounded-full flex items-center justify-center text-sm transition-all ${selectedDate === i+1 ? 'bg-red-700 text-white font-bold' : 'text-stone-700 hover:bg-stone-100'}`}>
                                                 {i+1}
                                             </button>
