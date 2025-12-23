@@ -12,8 +12,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-    <!-- Babel standalone so the browser can transform JSX at runtime.
-         This is fine for demo and small sites. For production prebuild locally. -->
+    <!-- Babel standalone for runtime JSX transform (demo mode) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -27,7 +26,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-      // Minimal icon factory
+      // Tiny inline icons (emoji-based) to avoid external packages
       const IconFactory = (emoji) => ({ size = 18, className = '' }) =>
         React.createElement('span', { style: { fontSize: size, lineHeight: 1 }, className }, emoji);
 
@@ -53,12 +52,11 @@
       const Headphones = IconFactory('🎧');
       const User = IconFactory('👤');
 
+      // --- CONFIG: 用你自己的 Calendly 链接和联系方式
       const CONFIG = {
         notionLink: "https://www.notion.so/theodorashi/Hi-I-am-Theodora-Shi-29c536031ef680d2a806f0852e96f862",
-        bookingLink: "https://calendly.com/s-1808218271/30min",
+        bookingLink: "https://calendly.com/s-1808218271/30min", // 请保持你的Calendly链接
         bookingSectionId: "booking-section",
-        kitPaymentLink: "",
-        audioPaymentLink: "",
         contact: {
           email: "s.1808218271@gmail.com",
           wechat: { link: "#", display: "ID: Theodora-Shi" },
@@ -69,13 +67,14 @@
 
       const { useState, useEffect } = React;
 
-      const App = () => {
+      function App() {
         const [isScrolled, setIsScrolled] = useState(false);
         const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
         const [selectedDate, setSelectedDate] = useState(null);
+        const [selectedSlot, setSelectedSlot] = useState(null);
         const [currentMonth, setCurrentMonth] = useState("November 2024");
 
-        // Calendly-style daily slots you configured
+        // 你在 Calendly 中设置的每日时间段
         const dailySlots = [
           "13:30 - 14:00",
           "14:30 - 15:00",
@@ -91,11 +90,14 @@
           return () => window.removeEventListener('scroll', handleScroll);
         }, []);
 
-        // Open Calendly in new tab
-        const openBooking = () => window.open(CONFIG.bookingLink, '_blank', 'noopener');
+        // 打开 Calendly（新标签）
+        const openBooking = () => {
+          window.open(CONFIG.bookingLink, '_blank', 'noopener');
+        };
 
         return (
           <div className="font-sans text-stone-800 bg-[#FAFAF9]">
+            {/* NAV */}
             <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-4 text-stone-900' : 'bg-transparent py-6 text-white'}`}>
               <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                 <div className="font-serif text-2xl font-bold tracking-tight cursor-pointer" onClick={() => window.scrollTo(0,0)}>
@@ -135,6 +137,7 @@
               )}
             </nav>
 
+            {/* HERO （已移除箭头） */}
             <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
               <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 ease-out"
@@ -152,10 +155,10 @@
                 <p className="text-lg md:text-2xl text-stone-200 font-light tracking-wide">
                   Seamless Travel. Authentic Culture. Practical Language.
                 </p>
-                {/* Removed the small arrow icon as requested */}
               </div>
             </section>
 
+            {/* ABOUT（含照片占位） */}
             <section id="about" className="py-24 bg-white">
               <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                 <div className="space-y-6">
@@ -178,17 +181,20 @@
                 </div>
 
                 <div className="relative h-[500px] w-full bg-stone-100 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center">
-                  <!-- Replace the src below with your photo file path or URL -->
+                  <!-- 把下面 src 改为你的图片文件名或 CDN 链接，例如 ./theodora-photo.jpg -->
                   <img
                     src="./theodora-photo.jpg"
                     alt="Theodora"
-                    onError={(e)=>{ e.target.src = 'https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop'; }}
+                    loading="lazy"
+                    onError={(e)=>{ e.target.onerror=null; e.target.src='https://images.unsplash.com/photo-1528659587707-1601235d949c?q=80&w=1000&auto=format&fit=crop'; }}
                     className="max-w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
+                    style={{width:'100%', height:'100%'}}
                   />
                 </div>
               </div>
             </section>
 
+            {/* SERVICES */}
             <section id="services" className="py-24 bg-[#FAFAF9]">
               <div className="max-w-6xl mx-auto px-6">
                 <div className="text-center mb-20">
@@ -196,6 +202,7 @@
                   <p className="text-stone-500 mt-4">Connect first, explore later. Start simple.</p>
                 </div>
 
+                {/* Path 1: China Travel */}
                 <div className="mb-24">
                   <div className="flex items-center gap-4 mb-10">
                     <div className="p-3 bg-stone-900 text-white rounded-full"><Compass size={24}/></div>
@@ -214,6 +221,7 @@
                       ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
+
                     <ServiceTierCard
                       level="Level 2: Preparation"
                       title="Survival Kit"
@@ -222,9 +230,10 @@
                       desc="A compact, practical pack for travelers to China. Includes essential spoken Chinese phrases with downloadable audio, clear setup instructions for local apps, a short PDF guide with safety tips and pre-trip checklists, and concise city guides for popular destinations."
                       features={["Essential spoken phrases with audio", "PDF checklists and safety tips", "Short city guides for popular destinations"]}
                       cta="Learn More"
-                      ctaLink="#services"
+                      ctaLink={CONFIG.bookingLink} 
                       highlight={true}
                     />
+
                     <ServiceTierCard
                       level="Level 3: Experience"
                       title="Signature Concierge"
@@ -239,6 +248,7 @@
                   </div>
                 </div>
 
+                {/* Path 2: Real-World Chinese */}
                 <div>
                   <div className="flex items-center gap-4 mb-10">
                     <div className="p-3 bg-red-700 text-white rounded-full"><MessageSquare size={24}/></div>
@@ -257,6 +267,7 @@
                       ctaLink={CONFIG.bookingLink}
                       highlight={false}
                     />
+
                     <ServiceTierCard
                       level="Level 2: Self-Study"
                       title="Audio Survival Pack - $9.99"
@@ -265,15 +276,16 @@
                       desc="A practical, beginner-friendly learning bundle with curated video lessons, downloadable audio drills, and compact study notes. Designed to build confidence in real-world situations like ordering food and taking taxis."
                       features={["Curated video lessons", "Downloadable audio drills", "Compact study notes"]}
                       cta="Get the Pack"
-                      ctaLink="#services"
+                      ctaLink={CONFIG.bookingLink}
                       highlight={true}
                     />
+
                     <ServiceTierCard
                       level="Level 3: Professional"
                       title="Professional Chinese Program"
                       price="By Request"
                       icon={<User size={20} />}
-                      desc="Structured courses tailored to your objectives - travel, study abroad, or business. I design a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources so you become operational and confident fast."
+                      desc="Structured courses tailored to your objectives - short-term travel, study abroad, or business. I build a curriculum around your timeline and goals, combining live lessons, practical exercises, and resources to make you operational fast and confident in real contexts."
                       features={["Custom curriculum", "Live tutoring and practice", "Practical business or travel focus"]}
                       cta="Apply for Program"
                       ctaLink={CONFIG.bookingLink}
@@ -284,214 +296,17 @@
               </div>
             </section>
 
+            {/* FAQ */}
             <section id="faq" className="py-20 bg-white border-t border-stone-100">
               <div className="max-w-3xl mx-auto px-6">
                 <h2 className="font-serif text-3xl text-stone-900 mb-10 text-center">Common Questions</h2>
                 <div className="space-y-4">
                   <AccordionItem
                     question="Is your service a travel agency?"
-                    answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I don't book flights for commission. I provide honest advice, route planning, and digital setup support that big agencies can't offer."
+                    answer="No, and that's my advantage. I am a personalized cultural consultant and a local friend. I provide honest advice, route planning, and digital setup support that big agencies can't offer."
                   />
                   <AccordionItem
                     question="I don't speak any Chinese. Is the Survival Kit enough?"
                     answer="For a short trip, yes. The kit is designed to get your phone set up and give you essential phrases to survive. For longer stays, I recommend a few coaching sessions."
                   />
-                  <AccordionItem
-                    question="How does the 'Remote Support' work?"
-                    answer="We connect on WeChat. If you get stuck in a taxi or can't read a menu, you send a picture or voice note, and I translate or call the driver for you. It's like having a friend in your pocket."
-                  />
-                </div>
-              </div>
-            </section>
-
-            <section id={CONFIG.bookingSectionId} className="py-24 bg-stone-900 text-white">
-              <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
-                <div className="space-y-10">
-                  <div>
-                    <h2 className="font-serif text-4xl mb-4">Let's Talk.</h2>
-                    <p className="text-stone-300 text-lg">
-                      The first step is just a conversation. Schedule a free chat to see if we are a good fit.
-                    </p>
-                    <p className="text-stone-400 text-sm mt-2">
-                      Email: {CONFIG.contact.email}
-                    </p>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-red-500 shrink-0"><Calendar /></div>
-                      <div>
-                        <p className="font-bold text-lg">Book a Video Chat</p>
-                        <p className="text-sm text-stone-400">Via Calendly (Zoom or Google Meet)</p>
-                        <p className="text-xs text-stone-500 mt-1">Click the button on the right to open the booking calendar</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-red-500 shrink-0"><Phone /></div>
-                      <div className="w-full">
-                        <p className="font-bold text-lg mb-3">Direct Message</p>
-                        <div className="space-y-3">
-                          <a href={CONFIG.contact.whatsapp.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors group">
-                            <div className="flex items-center gap-3">
-                              <MessageSquare size={18}/>
-                              <span className="text-sm font-medium">WhatsApp</span>
-                            </div>
-                            <span className="text-xs text-stone-400 group-hover:text-white transition-colors">{CONFIG.contact.whatsapp.display}</span>
-                          </a>
-
-                          <a href={CONFIG.contact.telegram.link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors group">
-                            <div className="flex items-center gap-3">
-                              <Send size={18}/>
-                              <span className="text-sm font-medium">Telegram</span>
-                            </div>
-                            <span className="text-xs text-stone-400 group-hover:text-white transition-colors">{CONFIG.contact.telegram.display}</span>
-                          </a>
-
-                          <div className="flex items-center justify-between p-3 bg-stone-800 rounded-lg group cursor-default">
-                            <div className="flex items-center gap-3">
-                              <MessageSquare size={18}/>
-                              <span className="text-sm font-medium">WeChat</span>
-                            </div>
-                            <span className="text-xs text-stone-400">{CONFIG.contact.wechat.display}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white text-stone-900 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px]">
-                  <div className="p-6 border-b border-stone-100 flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold text-lg">Theodora Shi</h3>
-                      <p className="text-sm text-stone-500">Free Discovery Call (30 min)</p>
-                    </div>
-                    <div className="text-stone-400"><Globe size={20}/></div>
-                  </div>
-
-                  <div className="flex-grow p-6 flex flex-col">
-                    <div className="flex justify-between items-center mb-6">
-                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("December 2024")}><ChevronDown className="rotate-90" size={20}/></button>
-                      <span className="font-bold text-lg">{currentMonth}</span>
-                      <button className="p-1 hover:bg-stone-100 rounded" onClick={()=>setCurrentMonth("January 2025")}><ChevronDown className="-rotate-90" size={20}/></button>
-                    </div>
-
-                    <div className="grid grid-cols-7 gap-2 mb-4 text-center text-xs text-stone-400 font-medium">
-                      <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
-                    </div>
-
-                    <div className="grid grid-cols-7 gap-2">
-                      {[...Array(30)].map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setSelectedDate(i+1)}
-                          className={`h-10 w-10 rounded-full flex items-center justify-center text-sm transition-all ${
-                            selectedDate === i+1
-                              ? 'bg-red-700 text-white font-bold shadow-lg'
-                              : 'text-stone-700 hover:bg-stone-100 hover:text-red-700'
-                          }`}
-                        >
-                          {i+1}
-                        </button>
-                      ))}
-                    </div>
-
-                    {selectedDate && (
-                      <div className="mt-auto animate-fade-in-up">
-                        <p className="text-xs text-center text-stone-500 mb-2">Selected: December {selectedDate}</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {dailySlots.slice(0,2).map((s,i) => (
-                            <button key={i} className="py-2 border border-red-700 text-red-700 rounded hover:bg-red-50 text-sm">{s}</button>
-                          ))}
-                        </div>
-                        <div className="mt-3 text-xs text-stone-500">Click "Open Booking Calendar" to confirm on Calendly.</div>
-                      </div>
-                    )}
-
-                    {!selectedDate && (
-                      <div className="mt-auto text-center text-sm text-stone-400 py-4">
-                        Select a date above to preview available slots
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={openBooking}
-                    className="w-full py-4 bg-red-700 text-white font-bold hover:bg-red-800 transition-all shadow-md flex justify-center items-center gap-2"
-                  >
-                    Open Booking Calendar <ArrowRight size={18}/>
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <footer className="bg-stone-950 text-stone-600 py-8 text-center text-sm border-t border-stone-900">
-              <p>&copy; 2024 Theodora. Connecting Cultures.</p>
-            </footer>
-          </div>
-        );
-      };
-
-      // ServiceTierCard
-      const ServiceTierCard = ({ level, title, price, icon, desc, features, cta, ctaLink, highlight }) => (
-        <div className={`p-8 rounded-xl border flex flex-col transition-all duration-300 ${highlight ? 'bg-white border-red-200 shadow-xl scale-105 z-10' : 'bg-[#FAFAF9] border-stone-200 hover:shadow-lg'}`}>
-          <div className="mb-4 flex justify-between items-start">
-            <div>
-              <span className={`text-xs font-bold uppercase tracking-wider ${highlight ? 'text-red-600' : 'text-stone-400'}`}>{level}</span>
-              <h4 className="text-xl font-bold text-stone-900 mt-1">{title}</h4>
-            </div>
-            <div className={`p-2 rounded-full ${highlight ? 'bg-red-50 text-red-600' : 'bg-stone-100 text-stone-400'}`}>
-              {icon}
-            </div>
-          </div>
-          <div className="mb-6">
-            <span className="text-3xl font-serif font-bold text-stone-900">{price}</span>
-          </div>
-          <p className="text-sm text-stone-600 mb-6 leading-relaxed flex-grow">{desc}</p>
-
-          <ul className="space-y-3 mb-8">
-            {features.map((f, i) => (
-              <li key={i} className="flex items-start text-xs text-stone-600">
-                <Check size={14} className="mr-2 mt-0.5 text-red-600 flex-shrink-0" />
-                {f}
-              </li>
-            ))}
-          </ul>
-
-          <a
-            href={ctaLink}
-            target={ctaLink && ctaLink.startsWith('http') ? "_blank" : "_self"}
-            rel="noopener noreferrer"
-            className={`block w-full py-3 text-sm font-bold rounded-lg text-center transition-colors ${highlight ? 'bg-red-700 text-white hover:bg-red-800' : 'bg-stone-200 text-stone-900 hover:bg-stone-300'}`}
-          >
-            {cta}
-          </a>
-        </div>
-      );
-
-      // AccordionItem
-      const AccordionItem = ({ question, answer }) => {
-        const [isOpen, setIsOpen] = useState(false);
-        return (
-          <div className="border-b border-stone-200 last:border-0">
-            <button
-              className="w-full py-5 flex justify-between items-center text-left focus:outline-none group"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <span className="font-medium text-stone-900 group-hover:text-red-700 transition-colors">{question}</span>
-              {isOpen ? <ChevronUp className="text-red-700" size={18}/> : <ChevronDown className="text-stone-400" size={18}/>}
-            </button>
-            <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-48 opacity-100 pb-5' : 'max-h-0 opacity-0'}`}>
-              <p className="text-sm text-stone-600 leading-relaxed">{answer}</p>
-            </div>
-          </div>
-        );
-      };
-
-      // Mount
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(App));
-    </script>
-  </body>
-</html>
+                  <A
